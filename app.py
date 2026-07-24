@@ -111,21 +111,7 @@ if st.button("Find Segment", use_container_width=True):
         <p style="color:#4B4B4B; margin:0; font-size:15px;">{segment_descriptions[str(cluster)]}</p>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Find Segment", use_container_width=True):
-    
-    # Out-of-range warning
-    if income < 15 or income > 137 or spending < 1 or spending > 99:
-        st.warning(
-            "⚠️ This input is outside the range of the training data "
-            "(Income: $15k–$137k, Spending Score: 1–99). The prediction "
-            "below may be less reliable, since the model wasn't trained "
-            "on customers with these characteristics."
-        )
-    
-    scaled_input = scaler.transform([[income, spending]])
-    # ... rest of the code same as before
-
-    centers = scaler.inverse_transform(kmeans.cluster_centers_)
+  centers = scaler.inverse_transform(kmeans.cluster_centers_)
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=centers[:,0], y=centers[:,1], mode='markers',
