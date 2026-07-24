@@ -65,6 +65,33 @@ st.title("Customer Segment Finder")
 st.markdown("<p style='color:#6B6B6B; font-size:16px;'>Enter a customer's income and spending score to find their marketing segment.</p>", unsafe_allow_html=True)
 
 st.divider()
+with st.expander("ℹ️ How this works"):
+    st.markdown("""
+    This tool uses **K-Means clustering** — a machine learning technique that 
+    groups customers into segments based on patterns in their income and 
+    spending behavior, without being told the "right answer" in advance.
+    
+    It was trained on 200 real customer records, and automatically discovered 
+    **5 natural segments**:
+    
+    | Segment | Income | Spending | Meaning |
+    |---|---|---|---|
+    | Premium Target Customers | High | High | Best customers — prioritize for loyalty programs |
+    | Careful Wealthy | High | Low | High potential — needs targeted convincing |
+    | Impulsive Spenders | Low | High | Engaged despite limited budget |
+    | Budget Conscious | Low | Low | Price-sensitive — respond to discounts |
+    | Standard Customers | Average | Average | General audience |
+    
+    **How to read the chart:** the gray dots are the "center" of each segment 
+    (based on training data). The blue star shows where your entered customer 
+    falls relative to those segments — the closer to a gray dot, the more 
+    strongly that customer matches that segment.
+    
+    **Note:** this model was trained on 200 customers with incomes ranging 
+    from $15k–$137k and spending scores of 1–99. Predictions for values 
+    far outside this range are less reliable, since the model has no data 
+    to learn from in those regions.
+    """)
 
 col1, col2 = st.columns(2)
 with col1:
@@ -84,6 +111,19 @@ if st.button("Find Segment", use_container_width=True):
         <p style="color:#4B4B4B; margin:0; font-size:15px;">{segment_descriptions[str(cluster)]}</p>
     </div>
     """, unsafe_allow_html=True)
+    if st.button("Find Segment", use_container_width=True):
+    
+    # Out-of-range warning
+    if income < 15 or income > 137 or spending < 1 or spending > 99:
+        st.warning(
+            "⚠️ This input is outside the range of the training data "
+            "(Income: $15k–$137k, Spending Score: 1–99). The prediction "
+            "below may be less reliable, since the model wasn't trained "
+            "on customers with these characteristics."
+        )
+    
+    scaled_input = scaler.transform([[income, spending]])
+    # ... rest of the code same as before
 
     centers = scaler.inverse_transform(kmeans.cluster_centers_)
     fig = go.Figure()
