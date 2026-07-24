@@ -111,7 +111,7 @@ if st.button("Find Segment", use_container_width=True):
         <p style="color:#4B4B4B; margin:0; font-size:15px;">{segment_descriptions[str(cluster)]}</p>
     </div>
     """, unsafe_allow_html=True)
-  centers = scaler.inverse_transform(kmeans.cluster_centers_)
+    centers = scaler.inverse_transform(kmeans.cluster_centers_)
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=centers[:,0], y=centers[:,1], mode='markers',
