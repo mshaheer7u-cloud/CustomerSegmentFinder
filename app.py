@@ -101,7 +101,6 @@ with col2:
 
 if st.button("Find Segment", use_container_width=True):
     if st.button("Find Segment", use_container_width=True):
-
     scaled_input = scaler.transform([[income, spending]])
     cluster = kmeans.predict(scaled_input)[0]
     segment_name = cluster_names[str(cluster)]
