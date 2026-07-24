@@ -100,13 +100,13 @@ with col2:
     spending = st.number_input("Spending Score (1-100)", min_value=0, max_value=100, value=50)
 
 if st.button("Find Segment", use_container_width=True):
+    if st.button("Find Segment", use_container_width=True):
+
     scaled_input = scaler.transform([[income, spending]])
     cluster = kmeans.predict(scaled_input)[0]
     segment_name = cluster_names[str(cluster)]
-    if st.button("Find Segment", use_container_width=True):
-    
     # Out-of-range warning
-if income < 15 or income > 137 or spending < 1 or spending > 99:
+    if income < 15 or income > 137 or spending < 1 or spending > 99:
         st.warning(
             "⚠️ This input is outside the range of the training data "
             "(Income: $15k–$137k, Spending Score: 1–99). The prediction "
