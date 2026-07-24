@@ -103,6 +103,19 @@ if st.button("Find Segment", use_container_width=True):
     scaled_input = scaler.transform([[income, spending]])
     cluster = kmeans.predict(scaled_input)[0]
     segment_name = cluster_names[str(cluster)]
+    if st.button("Find Segment", use_container_width=True):
+    
+    # Out-of-range warning
+    if income < 15 or income > 137 or spending < 1 or spending > 99:
+        st.warning(
+            "⚠️ This input is outside the range of the training data "
+            "(Income: $15k–$137k, Spending Score: 1–99). The prediction "
+            "below may be less reliable, since the model wasn't trained "
+            "on customers with these characteristics."
+        )
+    
+    scaled_input = scaler.transform([[income, spending]])
+    # ... rest of the code same as before
 
     st.markdown(f"""
     <div style="background-color:#EEF2FF; border-left:4px solid #2952CC; padding:16px 20px; border-radius:6px; margin-top:20px;">
