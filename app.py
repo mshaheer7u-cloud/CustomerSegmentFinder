@@ -5,6 +5,44 @@ import plotly.graph_objects as go
 
 st.set_page_config(page_title="Customer Segment Finder", layout="centered")
 
+# --- Custom CSS: clean, minimal, Inter font ---
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+.main {
+    background-color: #FAFAFA;
+}
+
+h1 {
+    font-weight: 600;
+    color: #1A1A1A;
+}
+
+.stButton>button {
+    background-color: #2952CC;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    padding: 0.5em 1.5em;
+    font-weight: 500;
+}
+
+.stButton>button:hover {
+    background-color: #1e3fa0;
+    color: white;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #2952CC;
+}
+</style>
+""", unsafe_allow_html=True)
+
 @st.cache_resource
 def load_models():
     kmeans = joblib.load('models/kmeans_model.pkl')
@@ -24,26 +62,48 @@ segment_descriptions = {
 }
 
 st.title("Customer Segment Finder")
-st.write("Enter a customer's income and spending score to find their segment.")
+st.markdown("<p style='color:#6B6B6B; font-size:16px;'>Enter a customer's income and spending score to find their marketing segment.</p>", unsafe_allow_html=True)
 
-income = st.number_input("Annual Income (k$)", min_value=0, max_value=150, value=60)
-spending = st.number_input("Spending Score (1-100)", min_value=0, max_value=100, value=50)
+st.divider()
 
-if st.button("Find Segment"):
+col1, col2 = st.columns(2)
+with col1:
+    income = st.number_input("Annual Income (k$)", min_value=0, max_value=150, value=60)
+with col2:
+    spending = st.number_input("Spending Score (1-100)", min_value=0, max_value=100, value=50)
+
+if st.button("Find Segment", use_container_width=True):
     scaled_input = scaler.transform([[income, spending]])
     cluster = kmeans.predict(scaled_input)[0]
     segment_name = cluster_names[str(cluster)]
 
-    st.success(f"Predicted Segment: **{segment_name}**")
-    st.write(segment_descriptions[str(cluster)])
+    st.markdown(f"""
+    <div style="background-color:#EEF2FF; border-left:4px solid #2952CC; padding:16px 20px; border-radius:6px; margin-top:20px;">
+        <p style="color:#6B6B6B; margin:0; font-size:14px;">PREDICTED SEGMENT</p>
+        <p style="color:#1A1A1A; font-size:24px; font-weight:600; margin:4px 0 8px 0;">{segment_name}</p>
+        <p style="color:#4B4B4B; margin:0; font-size:15px;">{segment_descriptions[str(cluster)]}</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     centers = scaler.inverse_transform(kmeans.cluster_centers_)
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=centers[:,0], y=centers[:,1], mode='markers',
-                              marker=dict(size=15, color='gray'),
-                              name='Segment Centers'))
-    fig.add_trace(go.Scatter(x=[income], y=[spending], mode='markers',
-                              marker=dict(size=18, color='#2952CC', symbol='star'),
-                              name='Your Input'))
-    fig.update_layout(xaxis_title='Annual Income (k$)', yaxis_title='Spending Score (1-100)')
-    st.plotly_chart(fig)
+    fig.add_trace(go.Scatter(
+        x=centers[:,0], y=centers[:,1], mode='markers',
+        marker=dict(size=16, color='#D1D5DB', line=dict(width=1, color='#9CA3AF')),
+        name='Segment Centers'
+    ))
+    fig.add_trace(go.Scatter(
+        x=[income], y=[spending], mode='markers',
+        marker=dict(size=20, color='#2952CC', symbol='star', line=dict(width=1, color='#1e3fa0')),
+        name='Your Input'
+    ))
+    fig.update_layout(
+        xaxis_title='Annual Income (k$)',
+        yaxis_title='Spending Score (1-100)',
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        font=dict(family='Inter', color='#1A1A1A'),
+        margin=dict(t=30, b=30, l=30, r=30),
+        legend=dict(bgcolor='rgba(0,0,0,0)')
+    )
+    st.plotly_chart(fig, use_container_width=True)
