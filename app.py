@@ -106,7 +106,7 @@ if st.button("Find Segment", use_container_width=True):
     if st.button("Find Segment", use_container_width=True):
     
     # Out-of-range warning
-    if income < 15 or income > 137 or spending < 1 or spending > 99:
+if income < 15 or income > 137 or spending < 1 or spending > 99:
         st.warning(
             "⚠️ This input is outside the range of the training data "
             "(Income: $15k–$137k, Spending Score: 1–99). The prediction "
