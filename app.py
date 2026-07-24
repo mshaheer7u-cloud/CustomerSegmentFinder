@@ -113,7 +113,6 @@ if st.button("Find Segment", use_container_width=True):
             "below may be less reliable, since the model wasn't trained "
             "on customers with these characteristics."
         )
-    
     scaled_input = scaler.transform([[income, spending]])
     # ... rest of the code same as before
 
